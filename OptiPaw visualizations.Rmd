@@ -1,0 +1,206 @@
+---
+title: "OptiPaw visualizations"
+output: 
+  html_document:
+    code_folding: hide
+---
+
+
+```{r, warning = FALSE, message = FALSE}
+optipaw = read.csv("/Users/PengOlivia/Desktop/OptiPaw/optipaw_FINAL.csv")
+library(tidyverse)
+library(dplyr)
+library(fmsb)
+library(vcd)
+library(ltm)
+library(psych)
+library(lubridate)
+
+library(tidyr)
+library(plotly)
+library(ggplot2)
+```
+
+```{r, warning = FALSE, message = FALSE}
+# Clean the dataset by removing rows with NA values
+optipaw_clean <- na.omit(optipaw)
+print(unique(optipaw_clean$Outcome.Type))
+
+# Ensure consistent case for categorical column 'Animal.Type'
+optipaw_clean$Animal.Type <- tolower(optipaw_clean$Animal.Type)
+
+# Group age into meaningful categories (e.g., 0-1 year, 1-5 years, etc.)
+optipaw_clean$Age_in_months <- optipaw_clean$Age * 12 # Convert Age to months
+age_groups <- cut(optipaw_clean$Age, 
+                  breaks = c(0, 12, 60, 120, Inf), 
+                  labels = c("0-1 year", "1-5 years", "5-10 years", "10+ years"))
+
+# Remove rows with NA values for Age
+optipaw_clean <- optipaw_clean[!is.na(optipaw_clean$Age), ]
+
+# Check if any NA values remain in Age
+sum(is.na(optipaw_clean$Age))
+```
+
+# Heatmap
+
+```{r, warning = FALSE, message = FALSE}
+# Step 1: Count frequency of unique combinations of Intake.Type and Outcome.Type
+counts <- optipaw_clean %>%
+  group_by(Intake.Type, Outcome.Type) %>%
+  summarise(count = n(), .groups = 'drop')
+
+# Step 2: Calculate total number of entries (sum of all unique combinations)
+total_entries <- sum(counts$count)  # Sum of all occurrences, not just unique combinations
+
+# Step 3: Convert frequency into percentage (count / total_entries) * 100
+counts <- counts %>%
+  mutate(percentage = (count / total_entries) * 100)  # Correct percentage calculation
+
+# Step 4: Pivot the data for the heatmap, using only relevant columns (excluding 'count')
+heatmap_data <- counts %>%
+  select(-count) %>%  # Exclude the 'count' column to prevent it from being included in the heatmap
+  pivot_wider(names_from = Intake.Type, values_from = percentage, values_fill = 0)
+
+# Step 5: Create interactive heatmap using plotly
+fig <- plot_ly(
+  z = as.matrix(heatmap_data[,-1]),  # The percentages for each combination (excluding the first column Outcome.Type)
+  x = colnames(heatmap_data)[-1],    # Intake types (from pivot_wider)
+  y = heatmap_data$Outcome.Type,      # Outcome types
+  type = "heatmap", 
+  colorscale = "YlGnBu",  # Use a green-blue color scale
+  reversescale = TRUE,    # Reverse the color scale so larger values are darker
+  colorbar = list(title = "Percentage (%)")  # Title for color legend (now based on percentage)
+)
+
+# Step 6: Update layout for better visualization
+fig <- fig %>%
+  layout(
+    title = "Percentage of Unique Combinations between Intake Type and Outcome Type",
+    xaxis = list(title = "Intake Type"),
+    yaxis = list(title = "Outcome Type")
+  )
+
+# Display the heatmap
+fig
+
+```
+
+
+# Time-Series Stacked Bar Plot 
+```{r, warning = FALSE, message = FALSE}
+# Step 1: Convert the Outcome.Date to a date format and extract the month
+optipaw <- optipaw %>%
+  mutate(Outcome.Date = ymd_hms(Outcome.Date),  # Ensure Outcome.Date is parsed as a datetime
+         month = month(Outcome.Date, label = TRUE))  # Extracts the month as a factor with labels
+
+# Step 2: Count frequency of each Outcome.Type per month
+monthly_counts <- optipaw %>%
+  group_by(month, Outcome.Type) %>%
+  summarise(frequency = n(), .groups = 'drop') %>%
+  complete(month, Outcome.Type, fill = list(frequency = 0))  # Fill missing combinations with 0
+
+# Step 3: Calculate the total frequency per month
+monthly_totals <- monthly_counts %>%
+  group_by(month) %>%
+  summarise(total_frequency = sum(frequency))
+
+# Step 4: Merge total frequency with the original data and convert to percentages
+monthly_counts <- monthly_counts %>%
+  left_join(monthly_totals, by = "month") %>%
+  mutate(percentage = (frequency / total_frequency) * 100)  # Convert to percentage
+
+# Step 5: Reorder stacking order of outcome types to include all new values
+monthly_counts$Outcome.Type <- factor(monthly_counts$Outcome.Type, levels = c(
+  'Adoption',       
+  'Rto-Adopt', 
+  'Return to Owner', 
+  'Relocate', 
+  'Transfer', 
+  'Euthanasia', 
+  'Missing', 
+  'Disposal', 
+  'Stolen',
+  'Lost', 
+  'Died',
+  'Reclaimed',
+  'Released To Wild',
+  'Escaped',
+  'Foster'             
+))
+
+# Step 6: Define the colors for the new outcomes
+colors <- c('Adoption' = 'darkblue', 
+            'Rto-Adopt' = 'turquoise',
+            'Return to Owner' = 'green',
+            'Relocate' = 'lightgreen',
+            'Transfer' = 'lightblue',
+            'Euthanasia' = 'yellow', 
+            'Missing' = 'orange', 
+            'Disposal' = 'pink',
+            'Stolen' = 'red',
+            'Lost' = 'darkred', 
+            'Died' = 'darkgray',
+            'Reclaimed' = 'purple',
+            'Released To Wild' = 'brown',
+            'Escaped' = 'lightpink',
+            'Foster' = 'lightyellow')
+
+# Step 7: Create interactive stacked bar plot using plotly, now using percentage
+fig <- plot_ly(
+  data = monthly_counts, 
+  x = ~month, 
+  y = ~percentage,  # Use percentage instead of frequency
+  color = ~Outcome.Type, 
+  type = "bar", 
+  colors = colors  # Apply the color scheme for the updated Outcome Types
+) %>%
+  layout(
+    title = "Percentage of Outcome Types by Month",
+    xaxis = list(title = "Months"),
+    yaxis = list(title = "Percentage of Outcome Types", range = c(0, 100)),  # Set y-axis range to 0-100%
+    barmode = 'stack'  # Stacks the bars
+  )
+
+fig
+
+```
+
+
+# Comparative Box plot 
+For every outcome type, make a box plot on the distribution for time length in shelter.
+```{r, warning = FALSE, message = FALSE}
+# Convert 'Intake.Date' and 'Outcome.Date' to date format
+optipaw$Intake.Date <- ymd_hms(optipaw$Intake.Date)
+optipaw$Outcome.Date <- ymd_hms(optipaw$Outcome.Date)
+
+# Calculate time in shelter in months
+optipaw <- optipaw %>%
+  mutate(Time.In.Shelter = time_length(interval(Intake.Date, Outcome.Date), "months")) %>%
+  filter(Time.In.Shelter > 0)  # Remove any rows with negative or zero months
+
+# Create the box plot using plotly
+fig <- plot_ly(optipaw, y = ~Outcome.Type, x = ~Time.In.Shelter, type = "box", boxpoints = FALSE)
+
+# Adjust the layout to move the x-axis label further out and adjust label font sizes
+fig <- fig %>% layout(
+  title = "Distribution of Time in Shelter (Months) by Outcome Type",
+  xaxis = list(
+    title = list(
+      text = "Length of Time in Shelter (Months)",
+      font = list(size = 12)  # Adjust the font size for x-axis title
+    )
+  ),
+  yaxis = list(
+    title = list(
+      text = "Outcome Type",
+      font = list(size = 12)  # Adjust the font size for y-axis title
+    )
+  ),
+  margin = list(b = 200)  # Adjust the margin if needed
+)
+
+# Show the plot
+fig
+```
+
