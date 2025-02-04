@@ -1,1 +1,1 @@
-# OptiPaw
+# OptiPaw 🐾 - PhD led Project
