@@ -38,13 +38,13 @@ Every year, **7.6 million animals** enter U.S. shelters, and resources are often
   - feature_engineering/
   - ml_models/
   - recommendation_system/
+- **docs/**:
+  - timeline.docx
+  - presentation.pdf
 - **results/**:
   - visuals/
   - ml_prediction_outcomes/
   - example_recommendation/
-- **docs/**:
-  - timeline.docx
-  - presentation.pdf
 - LICENSE
 - README.md
 
