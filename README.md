@@ -40,7 +40,7 @@ Every year, **7.6 million animals** enter U.S. shelters, and resources are often
   - recommendation_system/
 - **docs/**:
   - timeline.docx
-  - presentation.pdf
+  - OptiPaw Presentation.pdf
 - **results/**:
   - visuals/
   - ml_prediction_outcomes/
