@@ -29,9 +29,6 @@ Every year, **7.6 million animals** enter U.S. shelters, and resources are often
 ---
 
 ## Repository Structure
-- **data/**:
-  - raw/
-  - processed/
 - **code/**:
   - data_cleaning/
   - eda_visualisations/
@@ -43,12 +40,9 @@ Every year, **7.6 million animals** enter U.S. shelters, and resources are often
   - OptiPaw Presentation.pdf
   - Research Project Proposal.docx
   - Research Project Report 2.docx
-- **results/**:
-  - visuals/
-  - ml_prediction_outcomes/
-  - example_recommendation/
 - LICENSE
 - README.md
+- **data_instructions.md**
 
 ---
 
