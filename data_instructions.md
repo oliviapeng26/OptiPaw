@@ -1,6 +1,6 @@
 # Data Instructions for OptiPaw Repository
 
-The data files for the OptiPaw project are hosted externally due to their large size. Follow the steps below to access and organise the data:
+The data files for the OptiPaw project are hosted externally in google drive due to their large size. Follow the steps below to access the data and run the code:
 
 ---
 
@@ -13,9 +13,29 @@ The data files for the OptiPaw project are hosted externally due to their large 
 ---
 
 ## **Step 2: Download the Data**
-Download both the `raw` and `processed` folders to your local machine.
+Download data sets in both the `raw` and `processed` folders to your local machine.
 
 ---
 
 ## **Step 3: Copy the Data File's Address**
-Follow this allocation to copy and paste the data file's address into corresponding code files:
+Follow the allocation below to copy and paste the data file's address into the corresponding code files:  
+
+- **OptiPaw Data Folder** → **`raw`** → **All Datasets**  
+  Use these file paths in all code files (.ipynb) located in the `OpitPaw/data_cleaning` folder.  
+
+For example:  
+```python
+data = "data/raw/indiana-animal-data.csv"
+```
+
+- **OptiPaw Data Folder** → **`processed`** → **optipaw_FINAL.csv**  
+  Use this data file's path in all code files (.Rmd, ipynb) located in the `OpitPaw/eda_visualisations`,  `OpitPaw/feature_engineering`, `OpitPaw/ml_models`, and `OpitPaw/recommendation_system` folders. 
+
+For example:  
+```python
+data = "data/processed/optipaw_FINAL.csv"
+```
+---
+
+## **Step 4: Run the Code**
+Now you can run any code files in the OptiPaw repository!
