@@ -35,7 +35,7 @@ Every year, **7.6 million animals** enter U.S. shelters, and resources are often
   - feature_engineering/
   - ml_models/
   - recommendation_system/
-- **docs/**:
+- **docs/**: 
   - timeline.docx
   - OptiPaw Presentation.pdf
   - Research Project Proposal.docx
@@ -46,42 +46,27 @@ Every year, **7.6 million animals** enter U.S. shelters, and resources are often
 
 ---
 
-## How to Run
+## Results
 
-1. **Clone Repository**:
-  ```
-  git clone https://github.com/yourusername/OptiPaw.git
-  ```
-
-3. **Install Requirements**:
-  ```
-  pip install -r requirements.txt
-  ```
-4. **Run Scripts**:
-- Data Cleaning:
-  ```
-  python src/data_cleaning/clean_data.py
-  ```
-- Train Models:
-  ```
-  python src/models/train_model.py
-  ```
-- Generate Recommendations:
-  ```
-  python src/recommendation/recommend.py
-  ```
+### 1. **Visualisations**
+- **Top 3 intake and outcome combinations**: Stray & Adoption, Owner surrender & Adoption, Stray & Return to Owner.  
+- **Seasonal trend**: Adoption rates are highest in July and August.  
+  - **Conclusion**: Tailor adoption strategies to specific months. For example, advertise adoption more heavily outside of July and August to balance intake and provide adopters with diverse choices year-round.
+- **Shelter stay durations**: Shelter time may be related to the type of intake.  
+  - **Conclusion**: Allocate care more efficiently by addressing pets with longer stays, such as missing or lost pets, through surveys and improved community engagement.
 
 ---
 
-## Results
-1. **Visualizations**:
-- Seasonal adoption trends.
-- Shelter stay durations by intake type.
-2. **Machine Learning Performance**:
-- Best model: XGBoost (F1-Score: 0.87).
-- PCA impact: Reduced training time for linear models.
-3. **Recommendations**:
-- Unique names generated for pets based on attributes.
+### 2. **Machine Learning Performance**
+- **Best model**: XGBoost achieved the highest accuracy (0.8446) with balanced precision (0.8273), recall (0.8467), and F1-Score (0.8352). Log loss was recorded at 0.5406.  
+- **PCA impact**: Applying PCA reduced training time for linear models.  
+  - **Conclusion**: Pets with health issues often had poor adoption predictions. Boosting the health of these pets or considering humane alternatives like euthanasia could reduce shelter stays, increase chances of adoption, and create space for new intakes.
+
+---
+
+### 3. **Recommendations**
+- Generated unique names for pets based on attributes, improving the personal connection between adopters and pets.  
+  - **Conclusion**: Use personalised recommendations to enhance adoption appeal and reduce shelter time.
 
 ---
 
