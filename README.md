@@ -24,7 +24,7 @@ Every year, **7.6 million animals** enter U.S. shelters, and resources are often
 
 - **Pet Name Recommendation System:**
   - Implements kNN with TF-IDF encoding and various distance metrics.
-  - Avoids overused names to enhance uniqueness.
+  - Generate 5 names for user to choose.
 
 ---
 
